@@ -1,0 +1,8 @@
+# Ignore large and unnecessary files
+HTML/*.exe
+HTML/*.ico
+ASSETS/*
+*.log
+node_modules/
+.DS_Store
+Thumbs.db
