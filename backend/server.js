@@ -1,8 +1,21 @@
-// Simple WebSocket matchmaking server for Tic-Tac-Toe
-const WebSocket = require('ws');
-const PORT = process.env.PORT || 8080;
-const wss = new WebSocket.Server({ port: PORT });
 
+// Express + WebSocket server for Tic-Tac-Toe
+const express = require('express');
+const path = require('path');
+const WebSocket = require('ws');
+
+const app = express();
+const PORT = process.env.PORT || 8080;
+
+// Serve static files from public/
+app.use(express.static(path.join(__dirname, 'public')));
+
+const server = app.listen(PORT, () => {
+  console.log(`HTTP server running on http://localhost:${PORT}`);
+});
+
+// WebSocket server
+const wss = new WebSocket.Server({ server });
 let waitingPlayer = null;
 
 wss.on('connection', (ws) => {
@@ -15,11 +28,9 @@ wss.on('connection', (ws) => {
     waitingPlayer = ws;
     ws.send(JSON.stringify({ type: 'waiting' }));
   } else {
-    // Pair the two players
     ws.send(JSON.stringify({ type: 'start', symbol: 'O' }));
     waitingPlayer.send(JSON.stringify({ type: 'start', symbol: 'X' }));
 
-    // Setup relaying moves between players
     ws.on('message', (msg) => {
       waitingPlayer.send(msg);
     });
@@ -27,7 +38,6 @@ wss.on('connection', (ws) => {
       ws.send(msg);
     });
 
-    // Clean up on disconnect
     ws.on('close', () => {
       waitingPlayer.send(JSON.stringify({ type: 'opponent_left' }));
     });
