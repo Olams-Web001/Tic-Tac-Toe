@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TicTacPlay | Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+  <nav class="fixed top-0 w-full bg-white shadow-md p-4 flex justify-between items-center z-50">
+    <div class="text-2xl font-extrabold text-purple-600 flex items-center gap-2">
+      <span>❌⭕</span> TicTacPlay
+    </div>
+    <div class="space-x-4 text-sm md:text-base">
+      <a href="landing.html" class="text-gray-700 hover:text-purple-600">Home</a>
+      <a href="game.html" class="text-gray-700 hover:text-purple-600">Play</a>
+      <a href="leaderboard.html" class="text-purple-700 font-semibold underline">Leaderboard</a>
+    </div>
+  </nav>
+  <div class="pt-24"></div>
+  <div class="bg-white p-8 rounded shadow-md w-full max-w-sm text-center">
+    <div class="text-4xl mb-4">❌⭕</div>
+    <h2 id="formTitle" class="text-2xl font-bold mb-4">Login</h2>
+    <input id="username" type="text" placeholder="Username" class="w-full mb-3 p-2 border rounded" />
+    <input id="email" type="text" placeholder="Email" class="w-full mb-3 p-2 border rounded" />
+    <input id="photo" type="text" placeholder="Photo URL (optional)" class="w-full mb-3 p-2 border rounded" />
+    <button id="loginBtn" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 mb-2">Login</button>
+    <button id="guestBtn" class="w-full bg-gray-500 text-white p-2 rounded hover:bg-gray-600 mb-2">Play as Guest</button>
+    <p class="text-sm mb-2">
+      <a href="landing.html" class="text-blue-600 underline">&#8592; Back to Home</a>
+    </p>
+  </div>
+  <div id="toast" class="fixed bottom-6 right-6 bg-purple-600 text-white px-4 py-2 rounded shadow-lg hidden z-50"></div>
+  <script>
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 2500);
+    }
+    document.getElementById('loginBtn').onclick = function() {
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const photo = document.getElementById('photo').value.trim();
+      if (!username) return showToast("Please enter a username!");
+      if (!email) return showToast("Please enter a valid email!");
+      const user = {
+        username,
+        photo: photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=8b5cf6&color=fff`,
+        badges: [],
+        wins: 0,
+        games: 0,
+        history: []
+      };
+      localStorage.setItem("user", JSON.stringify(user));
+      showToast("Logged in!");
+      setTimeout(() => window.location.href = "profile.html", 1200);
+    };
+    document.getElementById('guestBtn').onclick = function() {
+      const guest = {
+        username: "Guest",
+        photo: "https://ui-avatars.com/api/?name=Guest&background=8b5cf6&color=fff",
+        badges: [],
+        wins: 0,
+        games: 0,
+        history: []
+      };
+      localStorage.setItem("user", JSON.stringify(guest));
+      showToast("Playing as Guest!");
+      setTimeout(() => window.location.href = "profile.html", 1200);
+    };
+  </script>
+  <script src="/JS/script.js"></script>
+</body>
+<!--
+File: Index.html
+Purpose: This is the login/sign-up page for the Tic-Tac-Toe app.
+
+Key Tailwind CSS classes:
+- bg-gray-100: light gray background
+- flex: flex container
+- items-center, justify-center: center content
+- h-screen: full viewport height
+- bg-white, p-8, rounded, shadow-md, w-full, max-w-sm, text-center: card styling
+- text-4xl, text-2xl, font-bold, mb-4: heading and title styling
+- w-full, mb-3, p-2, border, rounded: input styling
+- bg-blue-500, text-white, p-2, rounded, hover:bg-blue-600, mb-2: button styling
+- text-sm, text-blue-600, underline: link styling
+
+The form toggles between login and sign-up using JavaScript.
+-->

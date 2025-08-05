@@ -1,1 +1,401 @@
-...existing code from HTML/profile.html...
+    <!-- All JS code is now inside the <script> tag at the end of the body. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TicTacPlay | Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .cell {
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .cell:hover {
+      background-color: #f0f0f0;
+    }
+    #overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      display: none;
+    }
+    .animate-bounceIn {
+      animation: bounceIn 0.7s;
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      60% { transform: scale(1.1); opacity: 1; }
+      80% { transform: scale(0.95);}
+      100% { transform: scale(1);}
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-purple-200 min-h-screen flex flex-col">
+  <!-- Navbar -->
+  <nav class="fixed top-0 w-full bg-white shadow-md p-4 flex justify-between items-center z-50">
+    <div class="text-2xl font-extrabold text-purple-600 flex items-center gap-2">
+      <span>❌⭕</span> TicTacPlay
+    </div>
+    <div class="space-x-4 text-sm md:text-base">
+      <a href="landing.html" class="text-gray-700 hover:text-purple-600">Home</a>
+      <a href="game.html" class="text-gray-700 hover:text-purple-600">Play</a>
+      <a href="leaderboard.html" class="text-gray-700 hover:text-purple-600">Leaderboard</a>
+      <a href="profile.html" class="text-purple-700 font-semibold underline">Profile</a>
+    </div>
+  </nav>
+  <div class="pt-24"></div> <!-- Spacer for navbar -->
+
+  <main class="flex flex-1 w-full max-w-7xl mx-auto px-4 gap-8 mt-4">
+    <!-- Sidebar -->
+    <aside class="bg-white rounded-xl shadow-lg p-6 flex flex-col gap-6 w-64 min-h-[32rem]">
+      <button class="flex items-center gap-3 text-gray-700 hover:text-purple-600 font-semibold text-lg transition"><span>⚙️</span> Settings</button>
+      <button class="flex items-center gap-3 text-gray-700 hover:text-purple-600 font-semibold text-lg transition"><span>🔔</span> Notifications</button>
+      <button class="flex items-center gap-3 text-gray-700 hover:text-purple-600 font-semibold text-lg transition"><span>🏅</span> Achievements</button>
+      <button class="flex items-center gap-3 text-gray-700 hover:text-purple-600 font-semibold text-lg transition" id="logoutBtn"><span>🚪</span> Logout</button>
+    </aside>
+
+    <!-- Main Content -->
+    <section class="flex-1 flex flex-col gap-8">
+      <!-- User Profile -->
+      <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center max-w-md w-full mx-auto">
+        <div class="relative">
+          <button id="editProfileBtn" class="absolute top-2 right-2 bg-gray-200 rounded-full p-2 hover:bg-gray-300" title="Edit Profile">✏️</button>
+          <img id="profilePhoto" class="w-24 h-24 rounded-full mb-4 border-4 border-purple-200 object-cover" src="https://ui-avatars.com/api/?name=User&background=8b5cf6&color=fff" alt="Profile Photo">
+        </div>
+        <h2 id="profileName" class="text-xl font-bold mb-2">Username</h2>
+        <div class="flex flex-col items-center mb-4">
+          <span class="text-gray-500 text-sm">Badges Unlocked:</span>
+          <div id="profileBadges" class="flex gap-2 text-2xl mt-1"></div>
+        </div>
+        <div class="flex gap-6 text-center mb-2">
+          <div>
+            <div id="profileWins" class="text-lg font-bold text-purple-700">0</div>
+            <div class="text-xs text-gray-500">Wins</div>
+          </div>
+          <div>
+            <div id="profileGames" class="text-lg font-bold text-blue-700">0</div>
+            <div class="text-xs text-gray-500">Games</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game Section -->
+      <div class="flex flex-col md:flex-row gap-8 w-full">
+        <!-- Game Board -->
+        <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center flex-1">
+          <div class="flex justify-between w-full mb-4">
+            <span id="gameModeLabel" class="text-lg font-semibold text-purple-700">Mode: Bot</span>
+            <div class="flex gap-2">
+              <button id="switchBot" class="bg-green-500 text-white px-4 py-1 rounded-lg font-bold shadow hover:bg-green-600 transition text-sm">Bot</button>
+              <button id="switchVersus" class="bg-purple-500 text-white px-4 py-1 rounded-lg font-bold shadow hover:bg-purple-600 transition text-sm">Versus</button>
+            </div>
+          </div>
+          <div id="board" class="grid grid-cols-3 gap-2 mb-4">
+            <div class="cell bg-white w-20 h-20 flex items-center justify-center text-3xl font-bold border" data-index="0"></div>
+            <div class="cell bg-white w-20 h-20 flex items-center justify-center text-3xl font-bold border" data-index="1"></div>
+            <div class="cell bg-white w-20 h-20 flex items-center justify-center text-3xl font-bold border" data-index="2"></div>
+            <div class="cell bg-white w-20 h-20 flex items-center justify-center text-3xl font-bold border" data-index="3"></div>
+            <div class="cell bg-white w-20 h-20 flex items-center justify-center text-3xl font-bold border" data-index="4"></div>
+            <div class="cell bg-white w-20 h-20 flex items-center justify-center text-3xl font-bold border" data-index="5"></div>
+            <div class="cell bg-white w-20 h-20 flex items-center justify-center text-3xl font-bold border" data-index="6"></div>
+            <div class="cell bg-white w-20 h-20 flex items-center justify-center text-3xl font-bold border" data-index="7"></div>
+            <div class="cell bg-white w-20 h-20 flex items-center justify-center text-3xl font-bold border" data-index="8"></div>
+          </div>
+          <button onclick="resetGame()" class="bg-purple-500 text-white px-6 py-2 rounded-lg font-bold shadow hover:bg-purple-600 transition">Reset Game</button>
+        </div>
+      </div>
+
+      <!-- Achievements -->
+      <div class="mt-4">
+        <h3 class="font-bold text-lg mb-1">Achievements</h3>
+        <div id="profileBadges" class="flex gap-2 text-2xl"></div>
+      </div>
+      <!-- Game History -->
+      <div class="mt-4">
+        <h3 class="font-bold text-lg mb-1">Game History</h3>
+        <ul id="gameHistory" class="text-sm text-gray-600"></ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- Win Announcement Modal -->
+  <div id="overlay">
+    <!-- Modal will be injected here -->
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl p-6 w-full max-w-xs flex flex-col gap-4">
+      <h2 class="text-xl font-bold mb-2">Edit Profile</h2>
+      <input id="editName" class="border rounded p-2" placeholder="Username" />
+      <input id="editPhoto" class="border rounded p-2" placeholder="Photo URL" />
+      <div class="flex gap-2">
+        <button id="saveProfile" class="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+        <button id="cancelEdit" class="bg-gray-300 px-4 py-2 rounded">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="w-full bg-white shadow-inner py-6 mt-12 flex flex-col md:flex-row items-center justify-between px-8 text-gray-500 text-sm">
+    <div>&copy; 2025 TicTacPlay. All rights reserved.</div>
+    <div class="flex gap-4 mt-2 md:mt-0">
+      <a href="https://github.com/" class="hover:text-purple-600 transition">GitHub</a>
+    </div>
+  </footer>
+
+  <script>
+    // --- WebSocket matchmaking for Versus mode ---
+    let ws = null;
+    let playerSymbol = null;
+    function connectWebSocket() {
+      // Change this URL to your public server when deployed
+      ws = new WebSocket('ws://localhost:8080');
+      ws.onopen = () => {
+        // Connected, waiting for opponent
+      };
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'waiting') {
+          showSearchingAnimation();
+        } else if (data.type === 'start') {
+          removeSearchingAnimation();
+          playerSymbol = data.symbol;
+          document.getElementById("gameModeLabel").textContent = `Mode: Versus (Online) - You are ${playerSymbol}`;
+          resetGame();
+        } else if (data.type === 'opponent_left') {
+          alert('Opponent left the game.');
+          ws.close();
+        } else if (data.type === 'move') {
+          // Opponent made a move
+          const idx = data.index;
+          board[idx] = data.symbol;
+          document.querySelector(`.cell[data-index='${idx}']`).textContent = data.symbol;
+          currentPlayer = playerSymbol;
+          gameActive = true;
+        }
+      };
+      ws.onclose = () => {
+        ws = null;
+        playerSymbol = null;
+      };
+    }
+
+    // Override handleMove for Versus mode
+    const originalHandleMove = handleMove;
+    function handleMove(cell) {
+      const idx = parseInt(cell.getAttribute("data-index"));
+      if (!gameActive || board[idx]) return;
+      if (gameMode === "versus") {
+        if (currentPlayer !== playerSymbol) return; // Only play on your turn
+        board[idx] = playerSymbol;
+        cell.textContent = playerSymbol;
+        gameActive = false;
+        ws.send(JSON.stringify({ type: 'move', index: idx, symbol: playerSymbol }));
+        if (checkWin()) {
+          showWinAnnouncement(playerSymbol);
+          return;
+        }
+        if (board.every(c => c)) {
+          setTimeout(() => alert("It's a draw!"), 100);
+          return;
+        }
+      } else {
+        // Use the original handleMove logic for other modes
+        originalHandleMove(cell);
+      }
+    }
+    // Redirect if not logged in
+    const user = JSON.parse(localStorage.getItem("user")) || {
+      username: "Guest",
+      photo: "https://ui-avatars.com/api/?name=Guest&background=8b5cf6&color=fff",
+      badges: [],
+      wins: 0,
+      games: 0
+    };
+
+    // Fill profile info
+    document.getElementById("profilePhoto").src = user.photo || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.username || "User") + "&background=8b5cf6&color=fff";
+    document.getElementById("profileName").textContent = user.username || "Username";
+    document.getElementById("profileBadges").innerHTML = (user.badges && user.badges.length)
+      ? user.badges.map(b => `<span>${b}</span>`).join("")
+      : '<span class="text-gray-400 text-base">No badges yet</span>';
+    document.getElementById("profileWins").textContent = user.wins || 0;
+    document.getElementById("profileGames").textContent = user.games || 0;
+
+    // Logout
+    document.getElementById("logoutBtn").onclick = function() {
+      localStorage.removeItem("user");
+      window.location.href = "index.html";
+    };
+
+    // Game mode switching
+    let gameMode = localStorage.getItem("gameMode") || "bot";
+    function updateGameModeLabel() {
+      document.getElementById("gameModeLabel").textContent = "Mode: " + (gameMode === "bot" ? "Bot" : (gameMode === "versus" ? "Versus (Online)" : "Friend"));
+    }
+    updateGameModeLabel();
+
+    document.getElementById("switchBot").onclick = function() {
+      gameMode = "bot";
+      localStorage.setItem("gameMode", "bot");
+      updateGameModeLabel();
+      resetGame();
+      removeSearchingAnimation();
+      if (ws) ws.close();
+    };
+    document.getElementById("switchVersus").onclick = function() {
+      gameMode = "versus";
+      localStorage.setItem("gameMode", "versus");
+      updateGameModeLabel();
+      resetGame();
+      connectWebSocket();
+    };
+
+    function showSearchingAnimation() {
+      let searchingDiv = document.getElementById('searchingAnimation');
+      if (!searchingDiv) {
+        searchingDiv = document.createElement('div');
+        searchingDiv.id = 'searchingAnimation';
+        searchingDiv.className = 'flex flex-col items-center justify-center mb-4';
+        searchingDiv.innerHTML = `
+          <div class="animate-spin rounded-full h-10 w-10 border-t-4 border-purple-500 mb-2"></div>
+          <div class="text-purple-700 font-bold text-base">Looking for player...</div>
+        `;
+        const boardParent = document.getElementById('board').parentNode;
+        boardParent.insertBefore(searchingDiv, document.getElementById('board'));
+      }
+    }
+    function removeSearchingAnimation() {
+      const searchingDiv = document.getElementById('searchingAnimation');
+      if (searchingDiv) searchingDiv.remove();
+    }
+
+    // Minimal game logic (replace with your full JS logic as needed)
+    let board = ["", "", "", "", "", "", "", "", ""];
+    let currentPlayer = "X";
+    let gameActive = true;
+
+    function handleMove(cell) {
+      const idx = parseInt(cell.getAttribute("data-index"));
+      if (!gameActive || board[idx]) return;
+      board[idx] = currentPlayer;
+      cell.textContent = currentPlayer;
+      if (checkWin()) {
+        showWinAnnouncement(currentPlayer);
+        gameActive = false;
+        return;
+      }
+      if (board.every(c => c)) {
+        setTimeout(() => alert("It's a draw!"), 100);
+        gameActive = false;
+        return;
+      }
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
+      if (gameMode === "bot" && currentPlayer === "O" && gameActive) {
+        setTimeout(botMove, 300);
+      }
+    }
+
+    function resetGame() {
+      board = ["", "", "", "", "", "", "", "", ""];
+      document.querySelectorAll('.cell').forEach(cell => cell.textContent = "");
+      currentPlayer = "X";
+      gameActive = true;
+      document.getElementById("overlay").style.display = "none";
+    }
+
+    function checkWin() {
+      const winCombos = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+      return winCombos.some(combo =>
+        combo.every(idx => board[idx] === currentPlayer)
+      );
+    }
+
+    function botMove() {
+      // Simple bot: pick random empty cell
+      const empty = board.map((v,i) => v === "" ? i : null).filter(v => v !== null);
+      if (empty.length === 0) return;
+      const idx = empty[Math.floor(Math.random() * empty.length)];
+      const cell = document.querySelector(`.cell[data-index="${idx}"]`);
+      handleMove(cell);
+    }
+
+    document.querySelectorAll('.cell').forEach(cell => {
+      cell.onclick = () => handleMove(cell);
+    });
+
+    // Win Announcement Modal (same as game.html)
+    function showWinAnnouncement(winner) {
+      const overlay = document.getElementById("overlay");
+      overlay.innerHTML = ""; // Clear previous
+      overlay.style.display = "flex";
+      // Create modal content
+      const modal = document.createElement('div');
+      modal.className = 'bg-white rounded-xl shadow-2xl p-8 flex flex-col items-center animate-bounceIn';
+      modal.innerHTML = `
+        <div class="text-6xl mb-4">🎉</div>
+        <h2 class="text-3xl font-extrabold text-purple-700 mb-2">Congratulations!</h2>
+        <p class="text-lg text-gray-700 mb-4">Player <span class="font-bold text-blue-600">${winner}</span> wins the game!</p>
+        <button id="closeWinModal" class="mt-2 bg-purple-500 text-white px-6 py-2 rounded-lg font-bold shadow hover:bg-purple-600 transition">Close</button>
+      `;
+      overlay.appendChild(modal);
+      document.getElementById("closeWinModal").onclick = function() {
+        overlay.style.display = "none";
+      };
+    }
+
+    // Profile editing
+    const editBtn = document.getElementById('editProfileBtn');
+    const editModal = document.getElementById('editModal');
+    const editName = document.getElementById('editName');
+    const editPhoto = document.getElementById('editPhoto');
+    const saveProfile = document.getElementById('saveProfile');
+    const cancelEdit = document.getElementById('cancelEdit');
+
+    editBtn.onclick = () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      editName.value = user.username;
+      editPhoto.value = user.photo;
+      editModal.classList.remove('hidden');
+    };
+    cancelEdit.onclick = () => editModal.classList.add('hidden');
+    saveProfile.onclick = () => {
+      let user = JSON.parse(localStorage.getItem("user"));
+      user.username = editName.value || user.username;
+      user.photo = editPhoto.value || user.photo;
+      localStorage.setItem("user", JSON.stringify(user));
+      showToast("Profile updated!");
+      editModal.classList.add('hidden');
+      location.reload();
+    };
+
+    // Initialize board on load
+    resetGame();
+
+    // Render profile info
+    function renderProfile() {
+      const user = JSON.parse(localStorage.getItem("user"));
+      document.getElementById("profilePhoto").src = user.photo || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.username || "User") + "&background=8b5cf6&color=fff";
+      document.getElementById("profileName").textContent = user.username || "Username";
+      document.getElementById("profileBadges").innerHTML = (user.badges && user.badges.length)
+        ? user.badges.map(b => `<span>${b}</span>`).join("")
+        : '<span class="text-gray-400 text-base">No badges yet</span>';
+      document.getElementById("profileWins").textContent = user.wins || 0;
+      document.getElementById("profileGames").textContent = user.games || 0;
+      document.getElementById("gameHistory").innerHTML = (user.history && user.history.length)
+        ? user.history.map(h => `<li>${h}</li>`).join("")
+        : '<li class="text-gray-400">No games played yet</li>';
+    }
+    renderProfile();
+  </script>
+</body>
+</html>
