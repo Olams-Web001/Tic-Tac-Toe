@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tic-Tac-Toe | Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* Custom styles for the game board cells */
+    .cell {
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .cell:hover {
+      background-color: #f0f0f0; /* Light gray on hover */
+    } 
+  </style>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
+  <h1 class="text-3xl font-bold mb-4">Tic-Tac-Toe ❌⭕</h1>
+
+  <p id="status" class="text-lg mb-4">Player X's turn</p>
+
+  <!-- Game Info Section -->
+  <section class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6 mb-8 flex flex-col md:flex-row gap-6 items-center justify-between">
+    <div class="flex-1">
+      <h2 class="text-xl font-bold text-purple-700 mb-2">How to Play</h2>
+      <ul class="list-disc list-inside text-gray-700 text-base mb-2">
+        <li>Click on an empty square to make your move.</li>
+        <li>First to get three in a row (horizontally, vertically, or diagonally) wins!</li>
+        <li>If all squares are filled and no one wins, it's a draw.</li>
+      </ul>
+      <p class="text-gray-500 text-sm">Tip: You can play Versus (random online) or against the bot. The game mode is set on the home page.</p>
+    </div>
+    <div class="flex flex-col items-center gap-2">
+      <div class="bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg p-4 text-center">
+        <div class="text-2xl font-bold text-purple-700 mb-1">Current Mode</div>
+        <div id="gameModeDisplay" class="text-lg text-blue-600 font-semibold">Loading...</div>
+      </div>
+      <button onclick="resetGame()" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Reset Game</button>
+    </div>
+  </section>
+
+  <!-- Player Avatars Section -->
+  <section class="max-w-2xl mx-auto flex flex-row items-center justify-between mb-8 px-2">
+    <div class="flex flex-col items-center">
+      <div class="w-16 h-16 rounded-full bg-purple-200 flex items-center justify-center text-3xl font-bold text-purple-700 mb-2">X</div>
+      <div class="font-semibold text-gray-700">Player 1</div>
+    </div>
+    <div class="text-2xl text-gray-400">VS</div>
+    <div class="flex flex-col items-center">
+      <div class="w-16 h-16 rounded-full bg-blue-200 flex items-center justify-center text-3xl font-bold text-blue-700 mb-2">O</div>
+      <div class="font-semibold text-gray-700" id="player2Label">Player 2</div>
+    </div>
+  </section>
+
+  <div id="board" class="grid grid-cols-3 gap-2 mb-4">
+    <!-- 9 cells for the tic-tac-toe board -->
+    <div class="cell w-24 h-24 bg-white flex items-center justify-center text-4xl font-bold border" data-index="0"></div>
+    <div class="cell w-24 h-24 bg-white flex items-center justify-center text-4xl font-bold border" data-index="1"></div>
+    <div class="cell w-24 h-24 bg-white flex items-center justify-center text-4xl font-bold border" data-index="2"></div>
+    <div class="cell w-24 h-24 bg-white flex items-center justify-center text-4xl font-bold border" data-index="3"></div>
+    <div class="cell w-24 h-24 bg-white flex items-center justify-center text-4xl font-bold border" data-index="4"></div>
+    <div class="cell w-24 h-24 bg-white flex items-center justify-center text-4xl font-bold border" data-index="5"></div>
+    <div class="cell w-24 h-24 bg-white flex items-center justify-center text-4xl font-bold border" data-index="6"></div>
+    <div class="cell w-24 h-24 bg-white flex items-center justify-center text-4xl font-bold border" data-index="7"></div>
+    <div class="cell w-24 h-24 bg-white flex items-center justify-center text-4xl font-bold border" data-index="8"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="w-full bg-white shadow-inner py-6 mt-12 flex flex-col md:flex-row items-center justify-between px-8 text-gray-500 text-sm">
+    <div>&copy; 2025 TicTacPlay. All rights reserved.</div>
+    <div class="flex gap-4 mt-2 md:mt-0">
+      <a href="https://github.com/" class="hover:text-purple-600 transition">GitHub</a>
+      <a href="#" class="hover:text-purple-600 transition">Contact</a>
+      <a href="#" class="hover:text-purple-600 transition">Privacy Policy</a>
+    </div>
+  </footer>
+
+  <script src="/JS/script.js"></script>
+  <script>
+    // Display the current game mode (Bot or Versus)
+    const mode = localStorage.getItem('gameMode') || 'bot';
+    const gameModeDisplay = document.getElementById('gameModeDisplay');
+    if (gameModeDisplay) {
+      gameModeDisplay.textContent = mode === 'versus' ? 'Player vs Player (Online)' : 'Player vs Bot';
+    }
+    // Change Player 2 label if vs Bot
+    const player2Label = document.getElementById('player2Label');
+    if (player2Label) {
+      player2Label.textContent = mode === 'versus' ? 'Random Opponent' : 'Bot';
+    }
+
+    // Show searching animation if in versus mode
+    if (mode === 'versus') {
+      const searchingDiv = document.createElement('div');
+      searchingDiv.id = 'searchingAnimation';
+      searchingDiv.className = 'flex flex-col items-center justify-center mb-4';
+      searchingDiv.innerHTML = `
+        <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-purple-500 mb-2"></div>
+        <div class="text-purple-700 font-bold text-lg">Looking for player...</div>
+      `;
+      document.body.insertBefore(searchingDiv, document.getElementById('board'));
+    }
+  </script>
+</body>
+</html>
+<!--
+File: game.html
+Purpose: This is the main game board for playing Tic-Tac-Toe.
+
+Key Tailwind CSS classes:
+- bg-gray-100: light gray background
+- flex flex-col: flex container, column direction
+- items-center, justify-center: center content
+- min-h-screen: minimum height 100vh
+- p-4: padding
+- text-3xl, font-bold, mb-4: heading styling
+- text-lg, mb-4: status message styling
+- grid, grid-cols-3, gap-2, mb-4: board layout
+- cell: custom class for JS
+- w-24 h-24: cell size (6rem)
+- bg-white: cell background
+- flex items-center justify-center: center cell content
+- text-4xl, font-bold: cell text styling
+- border: cell border
+- bg-blue-500, text-white, px-4, py-2, rounded, hover:bg-blue-600: reset button styling
+
+The board is a 3x3 grid, each cell is clickable and styled for clarity and usability.
+-->
