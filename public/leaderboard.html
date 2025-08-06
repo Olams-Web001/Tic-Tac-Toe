@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leaderboard | TicTacPlay</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-purple-200 min-h-screen pt-20">
+
+  <!-- Fixed Navbar -->
+  <nav class="fixed top-0 w-full bg-white shadow-md p-4 flex justify-between items-center z-50">
+    <div class="text-2xl font-bold text-purple-600">TicTacPlay</div>
+    <div class="space-x-4 text-sm md:text-base">
+      <a href="index.html" class="text-gray-700 hover:text-purple-600">Home</a>
+      <a href="game.html" class="text-gray-700 hover:text-purple-600">Play</a>
+      <a href="leaderboard.html" class="text-purple-700 font-semibold underline">Leaderboard</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex flex-col items-center justify-center px-4 pt-24 pb-16 w-full">
+    <h1 class="text-4xl font-extrabold mb-6 text-purple-700 flex items-center gap-2">🏆 Leaderboard</h1>
+    <p class="mb-8 text-gray-600 text-lg max-w-xl text-center">See who’s on top! The leaderboard ranks players by their wins. Play more games to climb the ranks and earn your spot among the best.</p>
+    <div class="w-full max-w-2xl bg-white shadow-xl rounded-xl overflow-hidden mb-8">
+      <div class="flex flex-col md:flex-row items-center justify-between p-4 bg-gray-100">
+        <input id="searchInput" type="text" placeholder="Search player..." class="w-full md:w-1/3 p-2 border border-purple-200 rounded focus:outline-none focus:ring-2 focus:ring-purple-400 transition mb-2 md:mb-0" />
+        <div class="flex gap-2 mt-2 md:mt-0">
+          <button onclick="filterLeaderboard('all')" class="px-3 py-1 rounded bg-purple-500 text-white hover:bg-purple-600 transition text-sm">All Time</button>
+          <button onclick="filterLeaderboard('week')" class="px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600 transition text-sm">This Week</button>
+          <button onclick="filterLeaderboard('month')" class="px-3 py-1 rounded bg-green-500 text-white hover:bg-green-600 transition text-sm">This Month</button>
+        </div>
+      </div>
+      <table class="w-full">
+        <thead class="bg-purple-500 text-white">
+          <tr>
+            <th class="p-4 text-left">#</th>
+            <th class="p-4 text-left">Player</th>
+            <th class="p-4 text-left">Wins</th>
+            <th class="p-4 text-left">Games</th>
+            <th class="p-4 text-left">Win Rate</th>
+            <th class="p-4 text-left">Badges</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboardBody" class="text-gray-800">
+          <!-- Data will be inserted here -->
+        </tbody>
+      </table>
+    </div>
+    <div class="flex flex-col md:flex-row gap-4 w-full max-w-2xl justify-between">
+      <div class="bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg p-6 flex-1 shadow">
+        <h2 class="text-xl font-bold text-purple-700 mb-2">How to Climb the Leaderboard</h2>
+        <ul class="list-disc list-inside text-gray-700 text-base">
+          <li>Win games to earn points.</li>
+          <li>Play often to increase your total games.</li>
+          <li>Challenge friends or the bot for more fun!</li>
+        </ul>
+      </div>
+      <div class="bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg p-6 flex-1 shadow">
+        <h2 class="text-xl font-bold text-blue-700 mb-2">Tips for Winning</h2>
+        <ul class="list-disc list-inside text-gray-700 text-base">
+          <li>Block your opponent’s winning moves.</li>
+          <li>Try to control the center square.</li>
+          <li>Think ahead and plan your moves.</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full bg-white shadow-inner py-6 mt-12 flex flex-col md:flex-row items-center justify-between px-8 text-gray-500 text-sm">
+    <div>&copy; 2025 TicTacPlay. All rights reserved.</div>
+    <div class="flex gap-4 mt-2 md:mt-0">
+      <a href="https://github.com/" class="hover:text-purple-600 transition">GitHub</a>
+      <a href="#" class="hover:text-purple-600 transition">Contact</a>
+      <a href="#" class="hover:text-purple-600 transition">Privacy Policy</a>
+    </div>
+  </footer>
+
+  <script>
+    // Example data - normally you update this in your game script
+    const samplePlayers = [
+      { name: "OLams", wins: 8, games: 10, badges: ["🔥", "🏆"] },
+      { name: "Guest", wins: 5, games: 8, badges: ["🎉"] },
+      { name: "BotCrusher", wins: 3, games: 7, badges: [] },
+        { name: "NeoBlade", wins: 12, games: 15, badges: [] },
+  { name: "PixelFury", wins: 7, games: 10, badges: [] },
+  { name: "ZenSpark", wins: 18, games: 25, badges: [] },
+  { name: "EchoSnap", wins: 3, games: 7, badges: [] },
+  { name: "ByteBreaker", wins: 10, games: 14, badges: [] },
+  { name: "RoboKnight", wins: 5, games: 8, badges: [] },
+  { name: "VoltRaid", wins: 14, games: 20, badges: [] },
+  { name: "CrimsonDot", wins: 6, games: 9, badges: [] },
+  { name: "IronFang", wins: 4, games: 6, badges: [] },
+  { name: "NovaPunch", wins: 13, games: 16, badges: [] },
+  { name: "TrixBolt", wins: 11, games: 14, badges: [] },
+  { name: "LaserLynx", wins: 9, games: 13, badges: [] },
+  { name: "ShadowZap", wins: 8, games: 10, badges: [] },
+  { name: "GrimLogic", wins: 3, games: 5, badges: [] },
+  { name: "BlitzBear", wins: 2, games: 4, badges: [] },
+  { name: "CyberCreep", wins: 10, games: 15, badges: [] },
+  { name: "QuantumPaw", wins: 7, games: 10, badges: [] },
+  { name: "CodeFlare", wins: 16, games: 19, badges: [] },
+  { name: "HackStreak", wins: 15, games: 22, badges: [] },
+  { name: "TwitchByte", wins: 9, games: 12, badges: [] },
+  { name: "MegaNova", wins: 12, games: 18, badges: [] },
+  { name: "SilentPing", wins: 5, games: 7, badges: [] },
+  { name: "FireHawk", wins: 8, games: 11, badges: [] },
+  { name: "CrashBit", wins: 6, games: 9, badges: [] },
+  { name: "ZynxMaster", wins: 13, games: 17, badges: [] },
+  { name: "UltraChomp", wins: 11, games: 14, badges: [] },
+  { name: "PulseRanger", wins: 7, games: 10, badges: [] },
+  { name: "BitRival", wins: 3, games: 6, badges: [] },
+  { name: "GlitchMonk", wins: 5, games: 7, badges: [] },
+  { name: "AlphaCore", wins: 9, games: 12, badges: [] },
+  { name: "ZapTank", wins: 6, games: 9, badges: [] },
+  { name: "FlashBot", wins: 8, games: 11, badges: [] },
+  { name: "SkyDrift", wins: 4, games: 6, badges: [] },
+  { name: "RebootWolf", wins: 10, games: 13, badges: [] },
+  { name: "ToxicNova", wins: 6, games: 9, badges: [] },
+  { name: "StormGlare", wins: 14, games: 18, badges: [] },
+  { name: "NetGolem", wins: 11, games: 15, badges: [] }
+    ];
+
+    // Simulate time-based data for demo (all, week, month)
+    const allPlayers = samplePlayers;
+    const weekPlayers = [samplePlayers[0]];
+    const monthPlayers = [samplePlayers[0], samplePlayers[1], samplePlayers[2], samplePlayers[5], samplePlayers[3], samplePlayers[4], samplePlayers[7]];
+    
+
+    let players = JSON.parse(localStorage.getItem("leaderboard")) || allPlayers;
+    let currentFilter = 'all';
+
+    function getFilteredPlayers() {
+      if (currentFilter === 'week') return weekPlayers;
+      if (currentFilter === 'month') return monthPlayers;
+      return players;
+    }
+
+    function renderLeaderboard(filterText = "") {
+      const tbody = document.getElementById("leaderboardBody");
+      tbody.innerHTML = "";
+      let filtered = getFilteredPlayers();
+      if (filterText) {
+        filtered = filtered.filter(p => p.name.toLowerCase().includes(filterText.toLowerCase()));
+      }
+      // Sort by most wins, then by win rate
+      filtered.sort((a, b) => {
+        const winRateA = a.games ? a.wins / a.games : 0;
+        const winRateB = b.games ? b.wins / b.games : 0;
+        if (b.wins !== a.wins) return b.wins - a.wins;
+        return winRateB - winRateA;
+      });
+      filtered.forEach((player, index) => {
+        const winRate = player.games ? ((player.wins / player.games) * 100).toFixed(1) + '%' : '0%';
+        const badges = player.badges && player.badges.length ? player.badges.join(' ') : '<span class="text-gray-300">—</span>';
+        const row = document.createElement("tr");
+        row.classList.add(index % 2 === 0 ? "bg-gray-50" : "bg-white");
+        row.innerHTML = `
+          <td class="p-4 font-semibold">${index + 1}</td>
+          <td class="p-4 flex items-center gap-2">
+            <span class="inline-block w-8 h-8 rounded-full bg-purple-200 text-purple-700 font-bold flex items-center justify-center">${player.name.charAt(0).toUpperCase()}</span>
+            <span>${player.name}</span>
+          </td>
+          <td class="p-4">${player.wins}</td>
+          <td class="p-4">${player.games}</td>
+          <td class="p-4">${winRate}</td>
+          <td class="p-4">${badges}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // Filter buttons
+    function filterLeaderboard(type) {
+      currentFilter = type;
+      renderLeaderboard(document.getElementById('searchInput').value);
+    }
+
+    // Search input
+    document.addEventListener('DOMContentLoaded', function() {
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', function() {
+          renderLeaderboard(this.value);
+        });
+      }
+      renderLeaderboard();
+    });
+  </script>
+
+  <!--
+    File: leaderboard.html
+    Purpose: Placeholder for the leaderboard page. Intended for future leaderboard display and functionality.
+  -->
+
+</body>
+</html>
